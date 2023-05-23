@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from "react";
-import Layout from "@/components/Layout";
+import Layout from "@/pages/components/Layout";
 import axios from "axios";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/router";
