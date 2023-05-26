@@ -17,4 +17,17 @@ export default async function handle(req, res) {
     productDoc.save();
     res.json(productDoc);
   }
+
+  if (method === "PUT") {
+    const { title, description, price, _id } = req.body;
+    await Product.updateOne({ _id }, { title, description, price });
+    res.json(true);
+  }
+
+  if (method === "DELETE") {
+    if (req.query?.productId) {
+      await Product.deleteOne({ _id: req.query?.productId });
+      res.json(true);
+    }
+  }
 }
