@@ -1,22 +1,26 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 const ProductForm = ({
   _id,
   title: existingtitle,
   description: existingdescription,
   price: existingprice,
-  images,
+  images: existingimages,
 }) => {
   const router = useRouter();
   const [title, setTitle] = useState(existingtitle || "");
   const [description, setDescription] = useState(existingdescription || "");
   const [price, setPrice] = useState(existingprice || "");
+  const [images, setImages] = useState(existingimages || []);
   const [goToProducts, setGoToProducts] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
   const saveProduct = async (event) => {
     event.preventDefault();
-    const data = { title, description, price };
+    const data = { title, description, price, images };
     if (_id) {
       await axios.put("/api/products", { ...data, _id });
     } else {
@@ -29,21 +33,31 @@ const ProductForm = ({
   }
   const uploadImages = async (ev) => {
     ev.preventDefault();
-    const files = ev.target?.files;
-    if (files?.length > 0) {
-      const data = new FormData();
-      for (const file of files) {
-        data.append("file", file);
-      }
-      // const response = await axios.post("/api/upload", data, {
-      //   headers: { "Content-Type": "multipart /form-data" },
-      // });
+    const file = ev.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: data,
+    // console.log("uploaded file:", file);
+    // console.log(
+    //   "Uploaded file appended to form is:",
+    //   formData.get("file").name
+    // );
+
+    try {
+      const response = await axios.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log(res);
+      console.log("Response:", response);
+      // Perform any necessary actions with the image URLs (e.g., store them in state)
+      setImages((oldimages) => {
+        oldimages.push(response.data.newFilename);
+        // [...oldimages, response.data.newFilename];
+        return oldimages;
+      });
+      // console.log("images:", images);
+    } catch (error) {
+      // Handle the error
+      console.error(error);
     }
   };
 
@@ -57,7 +71,18 @@ const ProductForm = ({
         onChange={(ev) => setTitle(ev.target.value)}
       />
       <label>Photos</label>
-      <div className="mb-2">
+      <div className="mb-2 max-w-full h-auto">
+        {!!images?.length &&
+          images.map((path) => (
+            <div key={_id}>
+              <Image
+                src={`/public/uploads/${path}`}
+                alt={path}
+                width={100}
+                height={100}
+              ></Image>
+            </div>
+          ))}
         <label className="w-24 h-24 text-center cursor-pointer flex items-center justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -74,9 +99,28 @@ const ProductForm = ({
             />
           </svg>
           <div>Upload</div>
-          <input type="file" onChange={uploadImages} className="hidden" />
+          <input
+            type="file"
+            name="file"
+            onChange={uploadImages}
+            className="hidden"
+          />
         </label>
-        <div>{!images?.length && <div>No photos for this product</div>}</div>
+        {/* <div>{!images?.length && <div>No photos for this product</div>}</div> */}
+
+        {/* {uploadedImages?.length > 0 && (
+          <div>
+            <p>Uploaded Images:</p>
+            <ul>
+              {uploadedImages.map((imageUrl, index) => (
+                <li key={index}>
+                  <Image src={imageUrl} alt={`Uploaded Image ${index + 1}`} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )} */}
+        {/* {selectedImage && ( */}
       </div>
       <label>Description</label>
       <textarea
