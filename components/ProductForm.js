@@ -33,32 +33,24 @@ const ProductForm = ({
   }
   const uploadImages = async (ev) => {
     ev.preventDefault();
-    const file = ev.target.files[0];
     const formData = new FormData();
-    formData.append("file", file);
-
-    // console.log("uploaded file:", file);
-    // console.log(
-    //   "Uploaded file appended to form is:",
-    //   formData.get("file").name
-    // );
-
-    try {
-      const response = await axios.post("/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      console.log("Response:", response);
-      // Perform any necessary actions with the image URLs (e.g., store them in state)
-      setImages((oldimages) => {
-        oldimages.push(response.data.newFilename);
-        // [...oldimages, response.data.newFilename];
-        return oldimages;
-      });
-      // console.log("images:", images);
-    } catch (error) {
-      // Handle the error
-      console.error(error);
+    const files = ev.target.files;
+    for (const file of files) {
+      formData.append("file", file);
     }
+    formData.append("upload_preset", "nextjs-image-uploads-tutorial");
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dz4hadpmw/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    ).then((r) => r.json());
+    console.log("response:", response);
+    setImages((oldimages) => {
+      oldimages.push(response.secure_url);
+      return oldimages;
+    });
   };
 
   return (
@@ -74,13 +66,8 @@ const ProductForm = ({
       <div className="mb-2 max-w-full h-auto">
         {!!images?.length &&
           images.map((path) => (
-            <div key={_id}>
-              <Image
-                src={`/public/uploads/${path}`}
-                alt={path}
-                width={100}
-                height={100}
-              ></Image>
+            <div key={path}>
+              <Image src={path} alt={path} width={100} height={100}></Image>
             </div>
           ))}
         <label className="w-24 h-24 text-center cursor-pointer flex items-center justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200">
