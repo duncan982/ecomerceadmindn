@@ -2,6 +2,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Spinner from "./Spinner";
 
 const ProductForm = ({
   _id,
@@ -16,8 +17,7 @@ const ProductForm = ({
   const [price, setPrice] = useState(existingprice || "");
   const [images, setImages] = useState(existingimages || []);
   const [goToProducts, setGoToProducts] = useState(false);
-  const [uploadedImages, setUploadedImages] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const saveProduct = async (event) => {
     event.preventDefault();
     const data = { title, description, price, images };
@@ -35,22 +35,28 @@ const ProductForm = ({
     ev.preventDefault();
     const formData = new FormData();
     const files = ev.target.files;
-    for (const file of files) {
-      formData.append("file", file);
-    }
-    formData.append("upload_preset", "nextjs-image-uploads-tutorial");
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dz4hadpmw/image/upload",
-      {
-        method: "POST",
-        body: formData,
+    if (files.length > 0) {
+      setIsUploading(true);
+      for (const file of files) {
+        formData.append("file", file);
       }
-    ).then((r) => r.json());
-    console.log("response:", response);
-    setImages((oldimages) => {
-      oldimages.push(response.secure_url);
-      return oldimages;
-    });
+      formData.append("upload_preset", "nextjs-image-uploads-tutorial");
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dz4hadpmw/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      ).then((r) => r.json());
+      console.log("response:", response);
+      setImages((oldimages) => {
+        oldimages.push(response.secure_url);
+        // remove duplicate images
+        const uniqeOldImages = [...new Set(oldimages)];
+        return uniqeOldImages;
+      });
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -63,13 +69,23 @@ const ProductForm = ({
         onChange={(ev) => setTitle(ev.target.value)}
       />
       <label>Photos</label>
-      <div className="mb-2 max-w-full h-auto">
+      <div className="mb-2 max-w-full h-auto flex flex-wrap gap-2">
         {!!images?.length &&
           images.map((path) => (
-            <div key={path}>
-              <Image src={path} alt={path} width={100} height={100}></Image>
-            </div>
+            <Image
+              key={path}
+              src={path}
+              alt={path}
+              width={100}
+              height={100}
+              className="aspect-w-16 aspect-h-9 rounded-lg"
+            ></Image>
           ))}
+        {isUploading && (
+          <div className="h-24">
+            <Spinner />
+          </div>
+        )}
         <label className="w-24 h-24 text-center cursor-pointer flex items-center justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
