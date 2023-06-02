@@ -13,7 +13,6 @@ export default async function handle(req, res) {
   }
   if (method === "POST") {
     const { title, description, price, images } = req.body;
-    console.log("POST: images", images);
     const productDoc = await Product.create({
       title,
       description,

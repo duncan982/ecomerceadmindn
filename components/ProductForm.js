@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Spinner from "./Spinner";
+import { ReactSortable } from "react-sortablejs";
 
 const ProductForm = ({
   _id,
@@ -59,6 +60,10 @@ const ProductForm = ({
     }
   };
 
+  const upDateImagesOrder = (pics) => {
+    setImages(pics);
+  };
+
   return (
     <form onSubmit={saveProduct}>
       <label>Product Name</label>
@@ -70,17 +75,18 @@ const ProductForm = ({
       />
       <label>Photos</label>
       <div className="mb-2 max-w-full h-auto flex flex-wrap gap-1">
-        {!!images?.length &&
-          images.map((path) => (
-            <Image
-              key={path}
-              src={path}
-              alt={path}
-              width={100}
-              height={100}
-              className="aspect-w-16 aspect-h-9 rounded-lg w-auto h-auto"
-            ></Image>
-          ))}
+        <ReactSortable
+          list={images}
+          className="flex flex-wrap gap1"
+          setList={upDateImagesOrder}
+        >
+          {!!images?.length &&
+            images.map((path) => (
+              <div key={path} className="h-24">
+                <img src={path} alt="" className="rounded-lg" />
+              </div>
+            ))}
+        </ReactSortable>
         {isUploading && (
           <div className="h-24 flex items-center">
             <Spinner />
