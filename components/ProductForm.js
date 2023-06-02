@@ -48,7 +48,7 @@ const ProductForm = ({
           body: formData,
         }
       ).then((r) => r.json());
-      console.log("response:", response);
+      // console.log("response:", response);
       setImages((oldimages) => {
         oldimages.push(response.secure_url);
         // remove duplicate images
@@ -69,7 +69,7 @@ const ProductForm = ({
         onChange={(ev) => setTitle(ev.target.value)}
       />
       <label>Photos</label>
-      <div className="mb-2 max-w-full h-auto flex flex-wrap gap-2">
+      <div className="mb-2 max-w-full h-auto flex flex-wrap gap-1">
         {!!images?.length &&
           images.map((path) => (
             <Image
@@ -78,11 +78,11 @@ const ProductForm = ({
               alt={path}
               width={100}
               height={100}
-              className="aspect-w-16 aspect-h-9 rounded-lg"
+              className="aspect-w-16 aspect-h-9 rounded-lg w-auto h-auto"
             ></Image>
           ))}
         {isUploading && (
-          <div className="h-24">
+          <div className="h-24 flex items-center">
             <Spinner />
           </div>
         )}
