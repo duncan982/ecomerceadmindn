@@ -32,4 +32,10 @@ export default async function handle(req, res) {
     // categoryDoc.save();
     res.json(categoryDoc);
   }
+
+  if (method === "DELETE") {
+    const { _id } = req.query;
+    await Category.deleteOne({ _id: _id });
+    res.json("ok");
+  }
 }
