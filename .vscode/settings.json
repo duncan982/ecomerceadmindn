@@ -1,0 +1,5 @@
+{
+  "[html]": {
+    "diffEditor.ignoreTrimWhitespace": false
+  }
+}
