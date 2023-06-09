@@ -9,16 +9,20 @@ export default async function handle(req, res) {
     res.json(await Category.find().populate("parent"));
   }
   if (method === "POST") {
-    const { name, parentCategory } = req.body;
+    const { name, parentCategory, properties } = req.body;
     // const { name } = req.body;
     // console.log("req.body:", req.body);
     // const categoryDoc = await Category.create({ name });
-    const categoryDoc = await Category.create({ name, parent: parentCategory });
+    const categoryDoc = await Category.create({
+      name,
+      parent: parentCategory || undefined,
+      properties,
+    });
     categoryDoc.save();
     res.json(categoryDoc);
   }
   if (method === "PUT") {
-    const { name, parentCategory, _id } = req.body;
+    const { name, parentCategory, properties, _id } = req.body;
     // const { name } = req.body;
     // console.log("req.body:", req.body);
     // const categoryDoc = await Category.create({ name });
@@ -26,7 +30,8 @@ export default async function handle(req, res) {
       { _id },
       {
         name,
-        parent: parentCategory,
+        parent: parentCategory || undefined,
+        properties,
       }
     );
     // categoryDoc.save();
