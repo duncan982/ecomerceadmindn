@@ -6,7 +6,7 @@ export default function Layout({ children }) {
 
   if (!session) {
     return (
-      <div className="bg-blue-900 w-screen min-h-screen flex items-center">
+      <div className="bg-bgGrey w-screen min-h-screen flex items-center">
         <div className="text-center w-full ">
           <button
             onClick={() => {
@@ -22,7 +22,7 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="bg-blue-900 min-h-screen flex">
+    <div className="bg-grey-200 min-h-screen flex">
       <Nav />
       <div className="bg-white flex-grow mt-2 mb-2 mr-2 rounded-lg p-4">
         {children}
