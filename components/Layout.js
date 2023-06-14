@@ -25,7 +25,7 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="bg-grey-200 min-h-screen">
+    <div className="bg-bgGrey min-h-screen">
       <div className="md:hidden flex items-center p-4">
         <button
           onClick={() => {
