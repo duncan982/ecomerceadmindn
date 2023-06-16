@@ -12,10 +12,7 @@ const Products = () => {
   }, []);
   return (
     <Layout>
-      <Link
-        href={"/products/new"}
-        className="bg-blue-900 text-white rounded-md  py-1 px-2"
-      >
+      <Link href={"/products/new"} className="btn-primary">
         Add new product
       </Link>
 
