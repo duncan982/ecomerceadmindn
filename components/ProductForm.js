@@ -157,7 +157,7 @@ const ProductForm = ({
               <div
                 key={link}
                 className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
-                style={{ flex: "0 0 calc(33.33% - 1rem)" }} // Adjust the width of each image container
+                // style={{ flex: "0 0 calc(33.33% - 1rem)" }} // Adjust the width of each image container
               >
                 <img
                   src={link}
